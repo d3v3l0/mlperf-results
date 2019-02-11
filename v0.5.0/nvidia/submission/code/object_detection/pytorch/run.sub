@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -p mlperf		# partition
+#SBATCH -p main		# partition
 #SBATCH -N 1       		# number of nodes
 #SBATCH -t 12:00:00		# wall time
 #SBATCH -J object_detection	# job name
@@ -7,8 +7,6 @@
 #SBATCH --mem=0   		# all mem avail
 #SBATCH --mail-type=FAIL        # only send email on failure
 #SBATCH --ntasks-per-node=8	# n tasks per machine (one task per gpu)
-#SBATCH --threads-per-core=2	# HT is on
-#SBATCH --cores-per-socket=20	# 20 cores on each socket 
 
 DATESTAMP=${DATESTAMP:-`date +'%y%m%d%H%M%S'`}
 
@@ -18,7 +16,7 @@ BENCHMARK_NAME="maskrcnn"
 CONT=${CONT:-"mlperf-nvidia:$BENCHMARK"}
 DATADIR=${DATADIR:-"/raid/data/coco2014"}
 LOGDIR=${LOGDIR:-"/raid/results/$BENCHMARK"}
-SHAREDDIR=${SHAREDDIR:-"/scratch"} # Shared dir between all nodes 
+SHAREDDIR=${SHAREDDIR:-"/home"} # Shared dir between all nodes
 NEXP=${NEXP:-5} # Default number of times to run the benchmark
 
 ## DO NOT CHANGE ANYTHING BELOW -- DL params are in run_and_time.sh and config_<system>.sh files 
@@ -30,8 +28,6 @@ if [[ ! -f "config_${DGXSYSTEM}.sh" ]]; then
   DGXSYSTEM="DGX1"
 fi
 source config_${DGXSYSTEM}.sh
-
-IBDEVICES=${IBDEVICES:-$DGXIBDEVICES}
 
 ## Check whether we are running in a slurm env
 INSLURM=1
